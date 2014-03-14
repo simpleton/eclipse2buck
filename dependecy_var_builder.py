@@ -1,6 +1,6 @@
 import sys
 import os
-import var_name_decorate
+import decorator
 
 def get_current_dep_name(file):
     if os.path.isdir(file):
@@ -19,8 +19,8 @@ def get_reference_lists(file):
     
     return deps
 
-@var_name_decorate.print_var
-def write_binary_deps(var_name, root):
+@decorator.var("DEPS")
+def write_binary_deps(root):
     deps = get_reference_lists(root)
     for dep in deps:
         print "'//" + dep + ":"+ dep + "_lib',"
@@ -42,6 +42,4 @@ if __name__ == "__main__":
     else:
         root = os.getcwd()
 
-    #var_name = (get_current_dep_name(root).split("/"))[-1] + "_DEPS"
-    var_name = "DEPS"
-    write_binary_deps(var_name, root)
+    write_binary_deps(root)
