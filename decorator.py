@@ -7,7 +7,7 @@ class target(object):
         def wrapped(*args):
             print self.name + "("
             f(*args)
-            print ")"
+            print ")\n"
         return wrapped
 
 class var(object):
@@ -19,7 +19,7 @@ class var(object):
         def wrapped(*args):
             print self.name + " = ["
             f(*args)
-            print "]"
+            print "]\n"
         return wrapped
 
 class var_with_comma(object):
