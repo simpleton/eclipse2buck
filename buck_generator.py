@@ -14,10 +14,10 @@ def gen_android_lib(name, sdk_target, aidl):
 
 @decorator.target("prebuilt_native_library")
 def gen_native_lib(name):
-    print "name = '%s_native'" % name
-    print ","
-    print "native_libs = libs"
-    print ","
+    native_name = name + "_native"
+    print "name = '%s'," % native_name
+    print "native_libs = libs,"
+    return native_name
 
 @decorator.target("gen_aidl")
 def gen_aidl(name, aidl, proj):
@@ -26,9 +26,18 @@ def gen_aidl(name, aidl, proj):
     print "import_path = '%s/src/'," % proj
 
 def gen_aidls(aidls, proj):
+    deps = []
     for aidl in aidls:
         name = os.path.split(aidl)[1]
+        deps.append(name[:-5])
         gen_aidl(name, aidl, proj)
+    return deps
+
+def gen_libs(path, name):
+    print path
+    if len(os.listdir(path + "/libs")) > 0:
+        return gen_native_lib(name)
+
 
 def _print_manifest():
     print "manifest = 'AndroidManifest.xml'"
@@ -72,8 +81,8 @@ if __name__ == "__main__":
     root = os.path.realpath(root)
     path, proj_name = os.path.split(root)
     aidls = _find_all_aidls(root)
-    gen_aidls(aidls, proj_name)
-
+    #gen_aidls(aidls, proj_name)
+    print gen_libs(root, proj_name)
 #    aidls =  _find_all_aidls(os.path.realpath("../libnetscene"))
 #    _print_src(aidls)
 

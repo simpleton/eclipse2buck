@@ -6,8 +6,9 @@ class target(object):
     def __call__(self, f):
         def wrapped(*args):
             print self.name + "("
-            f(*args)
+            result = f(*args)
             print ")\n"
+            return result
         return wrapped
 
 class var(object):
@@ -18,8 +19,9 @@ class var(object):
     def __call__(self, f):
         def wrapped(*args):
             print self.name + " = ["
-            f(*args)
+            result = f(*args)
             print "]\n"
+            return result
         return wrapped
 
 class var_with_comma(object):
@@ -30,6 +32,7 @@ class var_with_comma(object):
     def __call__(self, f):
         def wrapped(*args):
             print self.name + " = ["
-            f(*args)
+            result = f(*args)
             print "],"
+            return result
         return wrapped
