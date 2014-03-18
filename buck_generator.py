@@ -79,11 +79,11 @@ def gen_exported_deps(exported_deps):
 def gen_res(path, name, proj_deps):
     is_res, is_assets = check_res_stat(path)
     exported_deps, deps = format_res_deps(path, proj_deps)
+    _exported_deps = []
+    _deps = []
     if is_assets or is_res:
         _exported_deps, _deps = gen_android_res(name, deps, is_res, is_assets)
-        exported_deps.extend(_exported_deps)
-        deps.extend(_deps)
-    return exported_deps, deps
+    return _exported_deps, _deps
 
 def check_res_stat(path):
     return len(_find_all_files_with_suffix(os.path.join(path, "res"), "*.xml")) > 0, os.path.isdir(os.path.join(path, "assets")) and len(os.listdir(os.path.join(path, "assets"))) > 0
