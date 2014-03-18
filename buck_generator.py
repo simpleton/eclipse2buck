@@ -44,7 +44,7 @@ def gen_android_lib(name, sdk_target, aidl, deps, export_deps):
 def gen_native_lib(name):
     native_name = name + "_native"
     print "name = '%s'," % native_name
-    print "native_libs = libs,"
+    print "native_libs = 'libs',"
     return ":%s" % native_name
 
 @decorator.target("gen_aidl")
@@ -65,7 +65,7 @@ def gen_jar(name, relative_path):
 @decorator.var_with_comma("deps")
 def gen_deps(deps):
     for dep in deps:
-        print "'%s,'" % dep
+        print "'%s'," % dep
 
 @decorator.var_with_comma("exported_deps")
 def gen_exported_deps(exported_deps):
