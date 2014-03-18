@@ -27,7 +27,7 @@ def gen_android_res(name, deps, is_res, is_assets):
 def gen_android_lib(name, sdk_target, aidl, deps, export_deps):
     name = name + "_src"
     print "name = '%s'," % name
-    print "android_target = '%s'," % sdk_target
+    #print "android_target = '%s'," % sdk_target
 
     ##print srcs target
     print "srcs = glob(['src/**/*.java', 'gen/**/*.java']) + "
@@ -78,7 +78,7 @@ def gen_res(path, name, proj_deps):
     exported_deps, deps = format_res_deps(path, proj_deps)
     if is_assets or is_res:
         _exported_deps, _deps = gen_android_res(name, deps, is_res, is_assets)
-        exported_deps.extend(_exported_deps)
+        #exported_deps.extend(_exported_deps)
         deps.extend(_deps)
     return exported_deps, deps
 
