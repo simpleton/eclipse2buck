@@ -6,8 +6,8 @@ import glob
 
 @decorator.target("android_resource")
 def gen_android_res(name, deps, is_res, is_assets):
-    export_deps = deps
-    deps = deps
+    export_deps = []
+    deps = []
     name = name + "_res"
     print "name = '%s'," % name
     print "package = 'com.tencent.mm',"
@@ -25,9 +25,10 @@ def gen_android_res(name, deps, is_res, is_assets):
 
 @decorator.target("android_library")
 def gen_android_lib(name, sdk_target, aidl, deps, export_deps):
-    name = name + "_proj"
+    name = name + "_src"
     print "name = '%s'," % name
     print "android_target = '%s'," % sdk_target
+
     ##print srcs target
     print "srcs = glob(['src/**/*.java', 'gen/**/*.java']) + "
     print "["
@@ -163,7 +164,7 @@ def format_proj_deps(root, folders):
     deps = []
     export_deps = []
     for proj in folders:
-        target = "//%s:%s_proj" % (proj, proj)
+        target = "//%s:%s_src" % (proj, proj)
         deps.append(target)
         export_deps.append(target)
     return export_deps, deps
