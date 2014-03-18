@@ -115,8 +115,8 @@ def gen_native_libs(path, name):
     deps = []
     if len(os.listdir(path + "/libs")) > 0:
         target = gen_native_lib(name)
-        export_desp.append(target)
         deps.append(target)
+        #don't export native lib, buck will copy all native .so files
     return export_desp, deps
 
 def _print_aidl_genfile(aidls):
