@@ -17,8 +17,10 @@ def gen_android_res(name, deps, is_res, is_assets):
         print "assets = 'assets',"
     print "visibility = [ 'PUBLIC' ],"
     gen_deps(deps)
-    export_deps.append(name)
-    deps.append(name)
+
+    target = ":%s" % name
+    export_deps.append(target)
+    deps.append(target)
     return export_deps, deps
 
 @decorator.target("android_library")
@@ -36,51 +38,55 @@ def gen_android_lib(name, sdk_target, aidl, deps, export_deps):
     print "manifest = 'AndroidManifest.xml',"
 
     gen_deps(deps)
-    gen_export_deps(export_deps)
+    gen_exported_deps(export_deps)
 
 @decorator.target("prebuilt_native_library")
 def gen_native_lib(name):
     native_name = name + "_native"
     print "name = '%s'," % native_name
     print "native_libs = libs,"
-    return native_name
+    return ":%s" % native_name
 
 @decorator.target("gen_aidl")
 def gen_aidl(name, aidl, proj):
-    name = name[:-5]
+    name = path_get_basename(name)
     print "name = '%s'," % name
     print "aidl = '%s'," % aidl
     print "import_path = '%s/src/'," % proj
-    return name
+    return ":%s" % name
 
 @decorator.target("prebuilt_jar")
 def gen_jar(name, relative_path):
     print "name = '%s'," % name
     print "binary_jar = '%s'," % relative_path
     print "visibility = [ 'PUBLIC' ],"
-    return name
+    return ":%s" % name
 
 @decorator.var_with_comma("deps")
 def gen_deps(deps):
     for dep in deps:
-        print ":%s," % dep
-
+        print "'%s,'" % dep
 
 @decorator.var_with_comma("exported_deps")
 def gen_exported_deps(exported_deps):
     for dep in exported_deps:
-        print ":%s," % target
+        print "'%s,'" % dep
 
-def gen_res(path, name, deps):
-    is_res = False
-    is_assets = False
-    if len(_find_all_files_with_suffix(path + "/res", "*.xml")) > 0:
-        is_assets = True
-    if len(os.listdir(path + "/assets")) > 0:
-        is_assets = True
-    if is_res or is_assets:
-        return gen_android_res(name, deps, is_res, is_assets)
+def gen_res(path, name, proj_deps):
+    is_res, is_assets = check_res_stat(path)
+    exported_deps, deps = format_res_deps(path, proj_deps)
+    if is_assets or is_res:
+        _exported_deps, _deps = gen_android_res(name, deps, is_res, is_assets)
+        exported_deps.extend(_exported_deps)
+        deps.extend(_deps)
+    return exported_deps, deps
 
+def check_res_stat(path):
+    return len(_find_all_files_with_suffix(os.path.join(path, "res"), "*.xml")) > 0, len(os.listdir(os.path.join(path, "assets"))) > 0
+
+def check_res_existed(path):
+    is_res, is_assets = check_res_stat(path)
+    return is_res or is_assets
 
 def gen_jars(path):
     export_deps = []
@@ -94,6 +100,7 @@ def gen_jars(path):
         deps.append(target)
     return  export_deps, deps
 
+    
 def gen_aidls(aidls, proj):
     export_deps = []
     deps = []
@@ -129,6 +136,10 @@ def _find_all_files_with_suffix(relative_path, suffix):
     return matches
 
 def parse_deps(path):
+    """
+    parse the project propertie file,
+    return (sdk_target, is_library_flag , deps)
+    """
     proj_fd = path + "/project.properties"
     sdk_target = None
     lib_flag = None
@@ -148,7 +159,32 @@ def parse_deps(path):
                 deps.append(dep)
     return sdk_target, lib_flag, deps
         
-        
+def format_proj_deps(root, folders):
+    deps = []
+    export_deps = []
+    for proj in folders:
+        target = "//%s:%s_proj" % (proj, proj)
+        deps.append(target)
+        export_deps.append(target)
+    return export_deps, deps
+
+def format_res_deps(root, folders):
+    deps = []
+    export_deps = []
+    for proj in folders:
+        if check_res_existed( os.path.join(path_get_parent(root), proj) ):
+            target = "//%s:%s_res" % (proj, proj)
+            deps.append(target)
+            export_deps.append(target)
+
+    return export_deps, deps
+
+
+def path_get_parent(path):
+    return os.path.abspath(os.path.join(path, os.pardir))
+
+def path_get_basename(path):
+    return os.path.splitext(os.path.basename(path))[0]
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
@@ -159,11 +195,31 @@ if __name__ == "__main__":
     path, proj_name = os.path.split(root)
     ##gen aidls
     aidls = _find_all_aidls(root)
-    #gen_aidls(aidls, proj_name)
-    ##gen libs
-    #print gen_libs(root, proj_name)
-#    aidls =  _find_all_aidls(os.path.realpath("../libnetscene"))
-#    _print_src(aidls)
-    #print gen_jars(root)
-    #print gen_android_res(proj_name,)
-    print parse_deps(root)
+    aidl_exported_deps, aidl_deps = gen_aidls(aidls, proj_name)
+    ##gen native libs
+    native_expoted_deps , native_deps = gen_native_libs(root, proj_name)
+    ##gen jars
+    jar_exported_deps, jar_deps = gen_jars(root)
+
+    ##dep_libs just the folders of the dependency modules
+    sdk_target, is_lib, dep_libs = parse_deps(root)
+    proj_exported_deps, proj_deps = format_proj_deps(root, dep_libs)
+
+    ##gen res
+    res_exported_deps, res_deps = gen_res(root, proj_name, dep_libs)
+
+    ##gen lib project
+    all_deps = []
+    all_deps.extend(proj_deps)
+    all_deps.extend(res_deps)
+    all_deps.extend(aidl_deps)
+    all_deps.extend(native_deps)
+    all_deps.extend(jar_deps)
+    all_exported_deps = []
+    all_exported_deps.extend(proj_exported_deps)
+    all_exported_deps.extend(res_exported_deps)
+    all_exported_deps.extend(aidl_exported_deps)
+    all_exported_deps.extend(native_expoted_deps)
+    all_exported_deps.extend(jar_exported_deps)
+
+    gen_android_lib(proj_name, sdk_target, aidls, all_deps, all_exported_deps)
