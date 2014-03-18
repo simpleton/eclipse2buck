@@ -5,7 +5,7 @@ import os
 import glob
 
 @decorator.target("android_resource")
-def gen_android_res(name, deps, is_res, is_assets):
+def gen_android_res(name, in_deps, is_res, is_assets):
     export_deps = []
     deps = []
     name = name + "_res"
@@ -16,11 +16,11 @@ def gen_android_res(name, deps, is_res, is_assets):
     if is_assets:
         print "assets = 'assets',"
     print "visibility = [ 'PUBLIC' ],"
-    gen_deps(deps)
+    gen_deps(in_deps)
 
     target = ":%s" % name
     export_deps.append(target)
-    deps.append(target)
+    #deps.append(target)
     return export_deps, deps
 
 @decorator.target("android_library")
@@ -30,7 +30,10 @@ def gen_android_lib(name, sdk_target, aidl, deps, export_deps):
     #print "android_target = '%s'," % sdk_target
 
     ##print srcs target
-    print "srcs = glob(['src/**/*.java', 'gen/**/*.java']) + "
+    if name.startswith("libsupport"):
+        print "srcs = glob(['src/**/*.java', 'java/**/*.java', 'eclair/**/*.java','eclair-mr1/**/*.java', 'froyo/**/*.java', 'gingerbread/**/*.java','honeycomb/**/*.java', 'honeycomb_mr2/**/*.java', 'ics/**/*.java', 'ics-mr1/**/*.java', 'jellybean/**/*.java', 'jellybean-mr1/**/*.java', 'jellybean-mr2/**/*.java']) + ",
+    else:
+        print "srcs = glob(['src/**/*.java', 'gen/**/*.java']) + "
     print "["
     _print_aidl_genfile(aidls)
     print "],"
@@ -71,19 +74,19 @@ def gen_deps(deps):
 @decorator.var_with_comma("exported_deps")
 def gen_exported_deps(exported_deps):
     for dep in exported_deps:
-        print "'%s,'" % dep
+        print "'%s'," % dep
 
 def gen_res(path, name, proj_deps):
     is_res, is_assets = check_res_stat(path)
     exported_deps, deps = format_res_deps(path, proj_deps)
     if is_assets or is_res:
         _exported_deps, _deps = gen_android_res(name, deps, is_res, is_assets)
-        #exported_deps.extend(_exported_deps)
+        exported_deps.extend(_exported_deps)
         deps.extend(_deps)
     return exported_deps, deps
 
 def check_res_stat(path):
-    return len(_find_all_files_with_suffix(os.path.join(path, "res"), "*.xml")) > 0, len(os.listdir(os.path.join(path, "assets"))) > 0
+    return len(_find_all_files_with_suffix(os.path.join(path, "res"), "*.xml")) > 0, os.path.isdir(os.path.join(path, "assets")) and len(os.listdir(os.path.join(path, "assets"))) > 0
 
 def check_res_existed(path):
     is_res, is_assets = check_res_stat(path)
@@ -98,7 +101,7 @@ def gen_jars(path):
         name = relative_path.split("/")[-1][:-4]
         target = gen_jar(name, relative_path)
         export_deps.append(target)
-        deps.append(target)
+        #deps.append(target)
     return  export_deps, deps
 
     
@@ -114,7 +117,8 @@ def gen_aidls(aidls, proj):
 def gen_native_libs(path, name):
     export_desp = []
     deps = []
-    if len(os.listdir(path + "/libs")) > 0:
+    lib_path = os.path.join(path, "libs")
+    if os.path.isdir(lib_path) and len(os.listdir(lib_path)) > 0:
         target = gen_native_lib(name)
         deps.append(target)
         #don't export native lib, buck will copy all native .so files
@@ -127,7 +131,16 @@ def _print_aidl_genfile(aidls):
         print "genfile( '%s.java' )," % aidl
 
 def _find_all_aidls(relative_path):
-    return _find_all_files_with_suffix(relative_path, "*.aidl")
+    aidls = _find_all_files_with_suffix(relative_path, "*.aidl") 
+    no_aidls = ["src/com/tencent/mm/cache/MCacheItem.aidl",
+               "src/com/tencent/tmassistantsdk/downloadclient/TMAssistantDownloadTaskInfo.aidl"]
+
+    for no_aidl in no_aidls:
+        if no_aidl in aidls:
+            aidls.remove(no_aidl)
+
+    return aidls
+    
 
 def _find_all_files_with_suffix(relative_path, suffix):
     matches = []
@@ -165,7 +178,7 @@ def format_proj_deps(root, folders):
     export_deps = []
     for proj in folders:
         target = "//%s:%s_src" % (proj, proj)
-        deps.append(target)
+        #deps.append(target)
         export_deps.append(target)
     return export_deps, deps
 
@@ -173,10 +186,9 @@ def format_res_deps(root, folders):
     deps = []
     export_deps = []
     for proj in folders:
-        if check_res_existed( os.path.join(path_get_parent(root), proj) ):
-            target = "//%s:%s_res" % (proj, proj)
-            deps.append(target)
-            export_deps.append(target)
+        target = "//%s:%s_src" % (proj, proj)
+        deps.append(target)
+        #export_deps.append(target)
 
     return export_deps, deps
 
