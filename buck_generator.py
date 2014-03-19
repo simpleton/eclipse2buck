@@ -88,7 +88,7 @@ def gen_res(path, name, proj_deps):
     return _exported_deps, _deps
 
 def check_res_stat(path):
-    return len(os.listdir(os.path.join(path, "res"))) > 0,  os.path.isdir(os.path.join(path, "assets")) and len(os.listdir(os.path.join(path, "assets"))) > 0
+    return os.path.isdir(os.path.join(path, "res")) and len(_find_all_files_with_suffix(os.path.join(path, "res"), "*.*")) > 0, os.path.isdir(os.path.join(path, "assets")) and len(_find_all_files_with_suffix(os.path.join(path, "assets"), "*.*")) > 0
 
 def check_res_existed(path):
     is_res, is_assets = check_res_stat(path)
