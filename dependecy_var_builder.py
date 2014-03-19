@@ -23,7 +23,7 @@ def get_reference_lists(file):
 def write_binary_deps(root):
     deps = get_reference_lists(root)
     for dep in deps:
-        print "'//" + dep + ":"+ dep + "_lib',"
+        print "'//" + dep + ":"+ dep + "_proj',"
 
 def check_is_lib(file):
     filename = get_current_dep_name(file) + '/project.properties';

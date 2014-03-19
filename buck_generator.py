@@ -25,9 +25,11 @@ def gen_android_res(name, in_deps, is_res, is_assets):
 
 @decorator.target("android_library")
 def gen_android_lib(name, sdk_target, aidl, deps, export_deps):
-    name = name + "_src"
+    name = name + "_proj"
     print "name = '%s'," % name
-    #print "android_target = '%s'," % sdk_target
+    if not sdk_target.startswith("Google"):
+        sdk_target = "Google Inc.:Google APIs:%d" % int(sdk_target.split('-')[1])
+    print "android_target = '%s'," % sdk_target
 
     ##print srcs target
     if name.startswith("libsupport"):
@@ -177,7 +179,7 @@ def format_proj_deps(root, folders):
     deps = []
     export_deps = []
     for proj in folders:
-        target = "//%s:%s_src" % (proj, proj)
+        target = "//%s:%s_proj" % (proj, proj)
         #deps.append(target)
         export_deps.append(target)
     return export_deps, deps
@@ -186,7 +188,7 @@ def format_res_deps(root, folders):
     deps = []
     export_deps = []
     for proj in folders:
-        target = "//%s:%s_src" % (proj, proj)
+        target = "//%s:%s_proj" % (proj, proj)
         deps.append(target)
         #export_deps.append(target)
 
@@ -206,6 +208,14 @@ if __name__ == "__main__":
         root = os.getcwd()
     root = os.path.realpath(root)
     path, proj_name = os.path.split(root)
+    ##dep_libs just the folders of the dependency modules
+    sdk_target, is_lib, dep_libs = parse_deps(root)
+
+    if is_lib != "true":
+        ##only gen libary project's BUCK
+        errinfo = "ONLY GEN LIB PROJECT's BUCK_%s" % proj_name
+        raise Exception(errinfo) 
+        
     ##gen aidls
     aidls = _find_all_aidls(root)
     aidl_exported_deps, aidl_deps = gen_aidls(aidls, proj_name)
@@ -214,8 +224,8 @@ if __name__ == "__main__":
     ##gen jars
     jar_exported_deps, jar_deps = gen_jars(root)
 
-    ##dep_libs just the folders of the dependency modules
-    sdk_target, is_lib, dep_libs = parse_deps(root)
+
+    
     proj_exported_deps, proj_deps = format_proj_deps(root, dep_libs)
 
     ##gen res
