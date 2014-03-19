@@ -120,7 +120,7 @@ def gen_native_libs(path, name):
     export_desp = []
     deps = []
     lib_path = os.path.join(path, "libs")
-    if os.path.isdir(lib_path) and len(os.listdir(lib_path)) > 0:
+    if os.path.isdir(lib_path) and len(_find_all_files_with_suffix(path, "*.so")) > 0:
         target = gen_native_lib(name)
         deps.append(target)
         #don't export native lib, buck will copy all native .so files
