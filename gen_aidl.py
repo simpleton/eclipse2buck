@@ -20,7 +20,7 @@ class AIDL(BaseTarget):
     def dump(self):
         for aidl_path in self.aidl_path_list:
             name = util.path_get_basename(aidl_path)
-            name = "%s%s" % (name, self._suffix)
+            name = self.target_name(name)
             self.deps.append(self._gen_aidl_target(name, aidl_path))
             
     def _find_all_aidls(self, relative_path):

@@ -40,3 +40,10 @@ class BaseTarget:
         for dep in deps:
             dep_name = "//%s:%s%s" % (dep, dep, self._suffix)
             self.deps.append(dep_name)
+
+    def target_name(self, name):
+        """
+        Returns:
+          str: buck target's name
+        """
+        return "%s%s" % (name, self._suffix)

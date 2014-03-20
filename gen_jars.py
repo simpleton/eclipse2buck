@@ -20,6 +20,6 @@ class Jars(BaseTarget):
 
     def dump(self):
         for jar_path in self.jar_list:
-            name = util.path_get_basename(jar_path)
+            name = self.target_name(util.path_get_basename(jar_path))
             self.gen_jar(name, jar_path)
             self.exported_deps.append(":%s" % name)

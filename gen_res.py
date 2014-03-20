@@ -26,7 +26,7 @@ class Resource(BaseTarget):
         self.is_res_existed = self.check_res_existed(self.lib_path)
 
         #always exported self
-        self.exported_deps.append(":%s%s" % (name, self._suffix))
+        self.exported_deps.append(self.target_name(name))
 
     def check_res_existed(self, path):
         return os.path.isdir(os.path.join(path, "res")) and len(util.find_all_files_with_suffix(os.path.join(path, "res"), "*.*")) > 0
@@ -42,7 +42,7 @@ class Resource(BaseTarget):
         
     @decorator.target("android_resource")
     def _dump(self):
-        print "name = '%s%s'," % (self.proj_name, self._suffix)
+        print "name = '%s'," % self.target_name(self.proj_name)
         print "package = '%s'," % config.package
         if self.is_res_existed:
             print "res = 'res',"
