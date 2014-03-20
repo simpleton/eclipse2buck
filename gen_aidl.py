@@ -22,7 +22,12 @@ class AIDL(BaseTarget):
             name = util.path_get_basename(aidl_path)
             name = self.target_name(name)
             self.deps.append(self._gen_aidl_target(name, aidl_path))
-            
+
+
+    def is_existed_aidl(self):
+        return len(self.aidl_path_list) > 0
+
+
     def _find_all_aidls(self, relative_path):
         path_list = util.find_all_files_with_suffix(relative_path, "*.aidl") 
         exclude_aidls = ["src/com/tencent/mm/cache/MCacheItem.aidl",
