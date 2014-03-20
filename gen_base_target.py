@@ -2,7 +2,7 @@ import os
 from config_file_parser import Project_properties_parser
 
 class BaseTarget:
-    name = ""
+    proj_name = ""
     root = ""
     properties = None
     lib_path = ""
@@ -26,7 +26,7 @@ class BaseTarget:
     """    
     def __init__(self, root, name, suffix):
         self.root = root
-        self.name = name
+        self.proj_name = name
         self._suffix = suffix
         self.lib_path = os.path.join(root, name)
         self.properties = Project_properties_parser(self.lib_path)

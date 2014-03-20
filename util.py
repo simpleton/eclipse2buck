@@ -15,3 +15,9 @@ def gen_deps(deps):
     for dep in deps:
         print "'%s'," % dep
     
+
+def path_get_parent(path):
+    return os.path.abspath(os.path.join(path, os.pardir))
+
+def path_get_basename(path):
+    return os.path.splitext(os.path.basename(path))[0]

@@ -42,7 +42,7 @@ class Resource(BaseTarget):
         
     @decorator.target("android_resource")
     def _dump(self):
-        print "name = '%s%s'," % (self.name, self._suffix)
+        print "name = '%s%s'," % (self.proj_name, self._suffix)
         print "package = '%s'," % config.package
         if self.is_res_existed:
             print "res = 'res',"
