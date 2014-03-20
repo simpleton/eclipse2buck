@@ -1,5 +1,6 @@
 import os
 from config_file_parser import Project_properties_parser
+import decorator
 
 class BaseTarget:
     proj_name = ""
@@ -47,3 +48,14 @@ class BaseTarget:
           str: buck target's name
         """
         return "%s%s" % (name, self._suffix)
+
+
+    @decorator.var_with_comma("deps")
+    def gen_deps(self, deps):
+        for dep in deps:
+            print "'%s'," % dep
+
+    @decorator.var_with_comma("exported_deps")
+    def gen_exported_deps(self, exported_deps):
+        for dep in exported_deps:
+            print "'%s'," % dep

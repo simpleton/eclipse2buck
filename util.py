@@ -14,7 +14,12 @@ def find_all_files_with_suffix(relative_path, suffix):
 def gen_deps(deps):
     for dep in deps:
         print "'%s'," % dep
-    
+
+@decorator.var_with_comma("exported_deps")
+def gen_exported_deps(exported_deps):
+    for dep in exported_deps:
+        print "'%s'," % dep
+
 
 def path_get_parent(path):
     return os.path.abspath(os.path.join(path, os.pardir))

@@ -49,5 +49,5 @@ class Resource(BaseTarget):
         if self.is_assets_existed:
             print "assets = 'assets',"
         print "visibility = [ 'PUBLIC' ],"
-        util.gen_deps(self.deps)
+        self.gen_deps(self.deps)
 
