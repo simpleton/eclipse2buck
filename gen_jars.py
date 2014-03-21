@@ -11,6 +11,7 @@ class Jars(BaseTarget):
         BaseTarget.__init__(self, root, name, "_JAR")
         folder = self.lib_path
         self.jar_list = util.find_all_files_with_suffix(folder, "*.jar")
+
         
     @decorator.target("prebuilt_jar")
     def gen_jar(self, name, relative_path):

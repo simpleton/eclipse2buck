@@ -26,7 +26,7 @@ class Resource(BaseTarget):
         self.is_res_existed = self.check_res_existed(self.lib_path)
 
         #always exported self
-        self.exported_deps.append(self.target_name(name))
+        self.exported_deps.append(":%s" % self.target_name(name))
 
     def check_res_existed(self, path):
         return os.path.isdir(os.path.join(path, "res")) and len(util.find_all_files_with_suffix(os.path.join(path, "res"), "*.*")) > 0
@@ -51,3 +51,12 @@ class Resource(BaseTarget):
         print "visibility = [ 'PUBLIC' ],"
         self.gen_deps(self.deps)
 
+    def format_res_deps(self, deps):
+        """
+        transfer project dependece to resource dependece
+        Args:
+          deps(list of str): the depencey project list
+        """
+        for dep in deps:
+            dep_name = "//%s:%s%s" % (dep, dep, self._suffix)
+            self.deps.append(dep_name)

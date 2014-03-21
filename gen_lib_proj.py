@@ -30,10 +30,10 @@ class LibProject(BaseTarget):
 
     def __init__(self, root, name):
         BaseTarget.__init__(self, root, name, "_PROJ")
+        self.res = Resource(root, name)
         self.aidl = AIDL(root, name)
         self.jar = Jars(root, name)
         self.native = NativeLib(root, name)
-        self.res = Resource(root, name)
         self.merge_all_deps()
 
     def dump(self):
@@ -44,11 +44,15 @@ class LibProject(BaseTarget):
         self.gen_android_lib()
 
     def merge_all_deps(self):
+        src_exported_deps, src_deps = self.format_proj_deps()
+
+        self.deps.extend(src_deps)
         self.deps.extend(self.aidl.deps)
-        self.deps.extend(self.res.deps)
+#        self.deps.extend(self.res.deps)
         self.deps.extend(self.jar.deps)
         self.deps.extend(self.native.deps)
 
+        self.exported_deps.extend(src_exported_deps)
         self.exported_deps.extend(self.aidl.exported_deps)
         self.exported_deps.extend(self.res.exported_deps)
         self.exported_deps.extend(self.jar.exported_deps)
@@ -79,3 +83,11 @@ class LibProject(BaseTarget):
         self.gen_deps(self.deps)
         self.gen_exported_deps(self.exported_deps)
     
+
+    def format_proj_deps(self):
+        deps = []
+        export_deps = []
+        for proj in self.properties.deps:
+            target = "//%s:%s" % (proj, self.target_name(proj))
+            export_deps.append(target)
+        return export_deps, deps

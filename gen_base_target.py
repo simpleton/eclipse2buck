@@ -31,16 +31,8 @@ class BaseTarget:
         self._suffix = suffix
         self.lib_path = os.path.join(root, name)
         self.properties = Project_properties_parser(self.lib_path)
-    
-    def format_res_deps(self, deps):
-        """
-        transfer project dependece to resource dependece
-        Args:
-          deps(list of str): the depencey project list
-        """
-        for dep in deps:
-            dep_name = "//%s:%s%s" % (dep, dep, self._suffix)
-            self.deps.append(dep_name)
+        self.deps = []
+        self.exported_deps = []
 
     def target_name(self, name):
         """
