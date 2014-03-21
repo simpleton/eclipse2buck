@@ -38,7 +38,7 @@ class Resource(BaseTarget):
 
     def dump(self):
         if (not self.is_res_existed) and self.is_assets_existed:
-            raise Exception("ONLY HAS ASSET??? PLZ PUT IT TO MAIN PROJECT")
+            raise Exception("[%s]ONLY HAS ASSET??? PLZ PUT IT TO MAIN PROJECT" % self.target_name(self.proj_name))
         if self.is_res_existed:
             self._dump()
         

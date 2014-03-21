@@ -14,7 +14,7 @@ class AIDL(BaseTarget):
         self.aidl_path_list = self._find_all_aidls(self.lib_path)
         for aidl_path in self.aidl_path_list:
             name = self.target_name(util.path_get_basename(aidl_path))
-            self.deps.append(name)
+            self.deps.append(":%s" % name)
 
     def dump_src(self):
         for aidl in self.aidl_path_list:
