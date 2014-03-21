@@ -8,6 +8,7 @@ from eclipse2buck.generator.aidl import AIDL
 from eclipse2buck import decorator
 from eclipse2buck.util import util
 import os
+import sys
 
 class LibProject(BaseTarget):
     aidl = None
@@ -93,3 +94,21 @@ class LibProject(BaseTarget):
             target = "//%s:%s" % (proj, self.target_name(proj))
             export_deps.append(target)
         return export_deps, deps
+
+if __name__ == "__main__":
+
+    if len(sys.argv) > 2:
+        root_path = sys.argv[1]
+        target_project = sys.argv[2]
+        proj = LibProject(root_path, target_project)
+        proj.dump()
+    else:
+        print """
+        Plz pass two arguments: 
+        1.the root folder of the app project 
+        2.the target lib folder
+        just like:
+          python -m eclipse2buck.generator.project ./ libmmui
+        """
+   
+
