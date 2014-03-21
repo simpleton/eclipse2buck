@@ -1,8 +1,8 @@
 #!/usr/bin/python
 
-from gen_aidl import AIDL
+from eclipse2buck.generator import aidl
 
 if __name__ == "__main__":
-    aidl = AIDL('../', 'libnetscene')
+    aidl = aidl.AIDL('./', 'libnetscene')
     aidl.dump()
     aidl.dump_src()

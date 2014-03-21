@@ -1,10 +1,10 @@
 #!/usr/bin/python
-import decorator
+from eclipse2buck import decorator
 import os
-import util
-import config
+from eclipse2buck.util import util
+from eclipse2buck import config
 
-from gen_base_target import BaseTarget
+from eclipse2buck.generator.base_target import BaseTarget
 
 class Resource(BaseTarget):
     is_res_existed = False

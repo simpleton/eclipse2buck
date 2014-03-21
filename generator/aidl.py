@@ -1,8 +1,8 @@
 #!/usr/bin/python
 
-from gen_base_target import BaseTarget
-import decorator
-import util
+from eclipse2buck.generator.base_target import BaseTarget
+from eclipse2buck.decorator import target
+from eclipse2buck.util import util
 
 class AIDL(BaseTarget):
     """
@@ -42,7 +42,7 @@ class AIDL(BaseTarget):
 
         return path_list
 
-    @decorator.target("gen_aidl")
+    @target("gen_aidl")
     def _gen_aidl_target(self, aidl_name, path):
         """
         print the aidl target 

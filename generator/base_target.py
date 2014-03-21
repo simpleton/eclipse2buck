@@ -1,7 +1,7 @@
 #!/usr/bin/python
 import os
-from config_file_parser import ProjectPropertiesParser
-import decorator
+from eclipse2buck.util.config_file_parser import ProjectPropertiesParser
+from eclipse2buck.decorator import var_with_comma
 
 class BaseTarget:
     proj_name = ""
@@ -43,12 +43,12 @@ class BaseTarget:
         return "%s%s" % (name, self._suffix)
 
 
-    @decorator.var_with_comma("deps")
+    @var_with_comma("deps")
     def gen_deps(self, deps):
         for dep in deps:
             print "'%s'," % dep
 
-    @decorator.var_with_comma("exported_deps")
+    @var_with_comma("exported_deps")
     def gen_exported_deps(self, exported_deps):
         for dep in exported_deps:
             print "'%s'," % dep

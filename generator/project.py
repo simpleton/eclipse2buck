@@ -1,10 +1,12 @@
-from gen_base_target import BaseTarget
-from gen_jars import Jars
-from gen_native import NativeLib
-from gen_res import Resource
-from gen_aidl import AIDL
-import decorator
-import util
+#!/usr/bin/python
+
+from eclipse2buck.generator.base_target import BaseTarget
+from eclipse2buck.generator.jars import Jars
+from eclipse2buck.generator.native import NativeLib
+from eclipse2buck.generator.res import Resource
+from eclipse2buck.generator.aidl import AIDL
+from eclipse2buck import decorator
+from eclipse2buck.util import util
 import os
 
 class LibProject(BaseTarget):

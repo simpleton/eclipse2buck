@@ -2,7 +2,7 @@
 
 import os
 import fnmatch
-import decorator
+from eclipse2buck import decorator
 
 def find_all_files_with_suffix(relative_path, suffix):
     matches = []

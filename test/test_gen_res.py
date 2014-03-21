@@ -1,9 +1,9 @@
 #!/usr/bin/python
 
-from ..generator.res import Resource
+from eclipse2buck.generator.res import Resource
 
 if __name__ == "__main__":
-    p = Resource('../', 'libmmui')
+    p = Resource('./', 'libmmui')
     p.dump()
 
 

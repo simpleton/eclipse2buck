@@ -1,7 +1,7 @@
 #!/usr/bin/python
-from gen_base_target import BaseTarget
-import decorator
-import util
+from eclipse2buck.generator.base_target import BaseTarget
+from eclipse2buck import decorator
+from eclipse2buck.util import util
 import os
 
 class NativeLib(BaseTarget):
