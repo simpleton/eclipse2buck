@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 from gen_aidl import AIDL
 
 if __name__ == "__main__":

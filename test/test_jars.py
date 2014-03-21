@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 from gen_jars import Jars
 
 if __name__ == "__main__":

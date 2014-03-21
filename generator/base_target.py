@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import os
 from config_file_parser import ProjectPropertiesParser
 import decorator

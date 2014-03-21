@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 from gen_native import NativeLib
 
 if __name__ == "__main__":

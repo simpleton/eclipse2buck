@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import decorator
 import os
 import util

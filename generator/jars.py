@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 from gen_base_target import BaseTarget
 import decorator
 import util

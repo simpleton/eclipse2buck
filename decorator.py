@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 class target(object):
     
     def __init__(self, name):
