@@ -1,5 +1,5 @@
 import os
-from config_file_parser import Project_properties_parser
+from config_file_parser import ProjectPropertiesParser
 import decorator
 
 class BaseTarget:
@@ -30,7 +30,7 @@ class BaseTarget:
         self.proj_name = name
         self._suffix = suffix
         self.lib_path = os.path.join(root, name)
-        self.properties = Project_properties_parser(self.lib_path)
+        self.properties = ProjectPropertiesParser(self.lib_path)
         self.deps = []
         self.exported_deps = []
 

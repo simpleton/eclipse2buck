@@ -1,8 +1,8 @@
 import os
 
-class Project_properties_parser:
+class ProjectPropertiesParser:
     #use sdk 16 as default
-    sdk_target = "16" 
+    sdk_target = "android:16" 
     is_library = False
     deps = []
 
