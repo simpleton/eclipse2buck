@@ -5,6 +5,7 @@ from eclipse2buck.util import util
 from eclipse2buck import config
 
 from eclipse2buck.generator.base_target import BaseTarget
+from eclipse2buck.util.calc_all_deps import DepsCalculator
 
 class Resource(BaseTarget):
     is_res_existed = False
@@ -22,16 +23,24 @@ class Resource(BaseTarget):
     """    
     def __init__(self, root, name):
         BaseTarget.__init__(self, root, name, config.res_suffix)
-        self.format_res_deps(self.properties.deps)
+        
+        calc = DepsCalculator(root, name)
+        mdeps = []
+        for dep in calc.get_deps(name):
+            if calc.is_res_existed[dep]:
+                mdeps.append(dep)
+        
+        self.format_res_deps(mdeps)
         self.is_assets_existed = self.check_assets_existed(self.lib_path)
-        self.is_res_existed = self.check_res_existed(self.lib_path)
+        #self.is_res_existed = self.check_res_existed(self.lib_path)
+        self.is_res_existed = calc.is_res_existed[name]
 
         #always exported self
         if self.is_res_existed:
             self.exported_deps.append(":%s" % self.target_name(name))
 
-    def check_res_existed(self, path):
-        return os.path.isdir(os.path.join(path, "res")) and len(util.find_all_files_with_suffix(os.path.join(path, "res"), "*.*")) > 0
+#    def check_res_existed(self, path):
+#        return os.path.isdir(os.path.join(path, "res")) and len(util.find_all_files_with_suffix(os.path.join(path, "res"), "*.*")) > 0
 
     def check_assets_existed(self, path):
         return os.path.isdir(os.path.join(path, "assets")) and len(util.find_all_files_with_suffix(os.path.join(path, "assets"), "*.*")) > 0
@@ -60,5 +69,5 @@ class Resource(BaseTarget):
           deps(list of str): the depencey project list
         """
         for dep in deps:
-            dep_name = "//%s:%s%s" % (dep, dep, self._suffix)
+            dep_name = "//%s:%s%s" % (dep, dep, config.res_suffix)
             self.deps.append(dep_name)
