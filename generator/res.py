@@ -21,7 +21,7 @@ class Resource(BaseTarget):
       is_assets_existed(bool): whether the assets folder existed
     """    
     def __init__(self, root, name):
-        BaseTarget.__init__(self, root, name, "_res")
+        BaseTarget.__init__(self, root, name, config.res_suffix)
         self.format_res_deps(self.properties.deps)
         self.is_assets_existed = self.check_assets_existed(self.lib_path)
         self.is_res_existed = self.check_res_existed(self.lib_path)

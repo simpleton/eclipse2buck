@@ -2,6 +2,7 @@
 from eclipse2buck.generator.base_target import BaseTarget
 from eclipse2buck import decorator
 from eclipse2buck.util import util
+from eclipse2buck import config
 import os
 
 class NativeLib(BaseTarget):
@@ -9,7 +10,7 @@ class NativeLib(BaseTarget):
     gen native lib target
     """
     def __init__(self, root, name):
-        BaseTarget.__init__(self, root, name, "_NATIVE")
+        BaseTarget.__init__(self, root, name, config.native_suffix)
         
     def dump(self):
         if self._is_exist_native():

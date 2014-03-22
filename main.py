@@ -2,10 +2,20 @@
 
 import sys, os
 from eclipse2buck.generator.project import LibProject
+from eclipse2buck import build_secondary_dex_list as gen_sec_dlist
+from eclipse2buck import build_bin_dep_list as gen_dep
 
-def travell_folders(root, exclude_folder):
+def travell_folders(root, bin_folder):
+    bin_path = os.path.join(root, bin_folder)
+    #gen bin's DEPS
+    gen_dep.dump_binary_deps(bin_path, os.path.join(bin_path, 'DEFS'))
+
+    #gen the list of secondary dex patterns
+    gen_sec_dlist.dump_secondary_pattern(root, os.path.join(bin_path, 'SECONDARY_DEX_PATTERN_LIST'))
+
+    #gen all libs' BUCK files
     for f in os.listdir(root):
-        if f != exclude_folder and is_android_lib_proj(f):
+        if f != bin_folder and is_android_lib_proj(f):
             lib_proj = LibProject(root, f)
             lib_proj.dump(os.path.join(root, f, "BUCK"))
             

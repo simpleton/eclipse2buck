@@ -2,6 +2,7 @@
 
 import sys
 import os
+from eclipse2buck import decorator
 
 def check_force_flag(lines):
     for line in lines:
@@ -23,7 +24,9 @@ def extract_include(lines):
                     if len(item) > 0:
                         print "\'" + item + "',"
 
-def find_all_plugin_properties(folder):
+
+@decorator.var("SECONDARY_DEX_PATTERN_LIST")
+def print_secondary_pattern(folder):
     for dirname in os.listdir(folder):
         if os.path.isdir(folder+dirname) and (not dirname.startswith('.')):
             filename = folder+dirname + "/plugin.properties" 
@@ -32,11 +35,17 @@ def find_all_plugin_properties(folder):
                 with open(filename) as fd:
                     extract_include(fd.readlines())
 
+
+def dump_secondary_pattern(folder, outfile='./SECONDARY_DEX_PATTERN_LIST'):
+    with open(outfile, 'w') as out:
+        terminal = sys.stdout
+        sys.stdout = out
+        print_secondary_pattern(folder)
+        sys.stdout = terminal
+
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         root = sys.argv[1]
     else:
         root = "./"
-    print "SECONDARY_DEX_PATTERN_LIST = ["
-    find_all_plugin_properties(root)
-    print "]"
+    print_secondary_pattern(root)

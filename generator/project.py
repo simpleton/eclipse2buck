@@ -7,6 +7,7 @@ from eclipse2buck.generator.res import Resource
 from eclipse2buck.generator.aidl import AIDL
 from eclipse2buck import decorator
 from eclipse2buck.util import util
+from eclipse2buck import config
 import os
 import sys
 
@@ -24,7 +25,7 @@ class LibProject(BaseTarget):
       res: resource target
     """
     def __init__(self, root, name, aidl, jar, native, res):
-        BaseTarget.__init__(self, root, name, "_PROJ")
+        BaseTarget.__init__(self, root, name, config.proj_suffix)
         self.aidl = aidl
         self.jar = jar
         self.native = native
@@ -32,7 +33,7 @@ class LibProject(BaseTarget):
         self.merge_all_deps()
 
     def __init__(self, root, name):
-        BaseTarget.__init__(self, root, name, "_PROJ")
+        BaseTarget.__init__(self, root, name, config.proj_suffix)
         self.res = Resource(root, name)
         self.aidl = AIDL(root, name)
         self.jar = Jars(root, name)
@@ -82,7 +83,7 @@ class LibProject(BaseTarget):
             sdk_target = "Google Inc.:Google APIs:%s" % self.properties.sdk_target.split('-')[1]
         else:
             sdk_target = self.properties.sdk_target
-        #print "android_target = '%s'," % sdk_target
+        print "android_target = '%s'," % sdk_target
 
         ##print srcs target
         if self.proj_name == "libsupport":

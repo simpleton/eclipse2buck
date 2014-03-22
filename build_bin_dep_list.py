@@ -2,7 +2,8 @@
 
 import sys
 import os
-import decorator
+from eclipse2buck import decorator
+from eclipse2buck import config
 
 def get_current_dep_name(file):
     if os.path.isdir(file):
@@ -22,10 +23,17 @@ def get_reference_lists(file):
     return deps
 
 @decorator.var("DEPS")
-def write_binary_deps(root):
+def print_binary_deps(root):
     deps = get_reference_lists(root)
     for dep in deps:
-        print "'//" + dep + ":"+ dep + "_proj',"
+            print "'//%s:%s%s'," % (dep, dep, config.proj_suffix)
+
+def dump_binary_deps(root, outfile="./DEPS"):
+    with open(outfile, 'w') as out:
+        terminal = sys.stdout
+        sys.stdout = out
+        print_binary_deps(root)
+        sys.stdout = terminal
 
 def check_is_lib(file):
     filename = get_current_dep_name(file) + '/project.properties';
@@ -44,4 +52,4 @@ if __name__ == "__main__":
     else:
         root = os.getcwd()
 
-    write_binary_deps(root)
+    print_binary_deps(root)

@@ -3,6 +3,7 @@
 from eclipse2buck.generator.base_target import BaseTarget
 from eclipse2buck.decorator import target
 from eclipse2buck.util import util
+from eclipse2buck import config
 
 class AIDL(BaseTarget):
     """
@@ -10,7 +11,7 @@ class AIDL(BaseTarget):
     """
     aidl_path_list = []
     def __init__(self, root, name):
-        BaseTarget.__init__(self, root, name, "_AIDL")
+        BaseTarget.__init__(self, root, name, config.aidl_suffix)
         self.aidl_path_list = self._find_all_aidls(self.lib_path)
         for aidl_path in self.aidl_path_list:
             name = self.target_name(util.path_get_basename(aidl_path))
