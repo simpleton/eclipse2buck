@@ -74,11 +74,13 @@ if __name__ == "__main__":
     calc sub module's linearalloc size
     """
     TAG = "[LinearAlloc]"
-    if len(sys.argv) > 1:
+    if len(sys.argv) > 2:
         root = sys.argv[1]
+        target = sys.argv[2]
     else:
         root = "./"
-    report_path = root + "buck-out/bin/app/__amm_app_preview_pre-release_split_zip_report__/"
+        target = "release"
+    report_path = root + ("buck-out/bin/app/__amm_app_preview_%s_split_zip_report__/" % target)
     module_maps = find_all_plugin_properties(root)
     print TAG + "main size:\t\t%dK method:\t\t%d" % calc_size(report_path + "primary.jar.txt")
     print TAG + "secondary size:=\t\t%dK method:\t\t%d" % calc_size(report_path + "com.tencent.mm.plugin.mutidex.jar.txt")
