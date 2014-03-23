@@ -9,14 +9,20 @@ class NativeLib(BaseTarget):
     """
     gen native lib target
     """
+    is_exist_native = False
     def __init__(self, root, name):
         BaseTarget.__init__(self, root, name, config.native_suffix)
+        self.is_exist_native = self._is_exist_native()
+        if self.is_exist_native:
+            name = self.target_name(self.proj_name)
+            self.deps.append(":%s" % name)
+
+            
         
     def dump(self):
-        if self._is_exist_native():
+        if self.is_exist_native:
             name = self.target_name(self.proj_name)
             self.gen_native_lib(name)
-            self.deps.append(name)
     
 
     @decorator.target("prebuilt_native_library")
