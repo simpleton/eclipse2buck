@@ -80,11 +80,15 @@ if __name__ == "__main__":
     else:
         root = "./"
         target = "release"
-    report_path = root + ("buck-out/bin/app/__amm_app_preview_%s_split_zip_report__/" % target)
+    report_folder = root + ("buck-out/bin/app/__amm_app_preview_%s_split_zip_report__/" % target)
     module_maps = find_all_plugin_properties(root)
-    print TAG + "main size:\t\t%dK method:\t\t%d" % calc_size(report_path + "primary.jar.txt")
-    print TAG + "secondary size:=\t\t%dK method:\t\t%d" % calc_size(report_path + "com.tencent.mm.plugin.mutidex.jar.txt")
-    size_dict, method_dict = calc_plugin_module_size(report_path + "com.tencent.mm.plugin.mutidex.jar.txt", module_maps)
 
+    for textfile in os.listdir(report_folder):
+    	if os.path.isfile(os.path.join(report_folder, textfile)):
+    		size, method_num = calc_size(os.path.join(report_folder, textfile))
+    		wording = "%s: %s size:\t\t %dK" %(TAG, textfile[:-len(".jar.txt")], size)
+    		print wording
+
+    size_dict, method_dict = calc_plugin_module_size(os.path.join(report_folder, "com.tencent.mm.plugin.mutidex.jar.txt"), module_maps)
     for name, size in size_dict.iteritems():
        print TAG + "Module %s,\t\tsize %dK" % (name, size)
