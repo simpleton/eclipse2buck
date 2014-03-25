@@ -5,6 +5,7 @@ from eclipse2buck.generator.jars import Jars
 from eclipse2buck.generator.native import NativeLib
 from eclipse2buck.generator.res import Resource
 from eclipse2buck.generator.aidl import AIDL
+from eclipse2buck.generator.project_config import ProjectConfig
 from eclipse2buck import decorator
 from eclipse2buck.util import util
 from eclipse2buck import config
@@ -16,6 +17,7 @@ class LibProject(BaseTarget):
     jar = None
     native = None
     res = None
+    project_config = None
     """
     gen native lib target
     Vars:
@@ -24,12 +26,13 @@ class LibProject(BaseTarget):
       native: native target
       res: resource target
     """
-    def __init__(self, root, name, aidl, jar, native, res):
+    def __init__(self, root, name, aidl, jar, native, res, project_config):
         BaseTarget.__init__(self, root, name, config.proj_suffix)
         self.aidl = aidl
         self.jar = jar
         self.native = native
         self.res = res
+        self.project_config = project_config
         self.merge_all_deps()
 
     def __init__(self, root, name):
@@ -38,27 +41,27 @@ class LibProject(BaseTarget):
         self.aidl = AIDL(root, name)
         self.jar = Jars(root, name)
         self.native = NativeLib(root, name)
+        self.project_config = ProjectConfig(root, name)
         self.merge_all_deps()
 
     def dump(self, *args):
         if len(args) == 0:
-            self.jar.dump()
-            self.native.dump()
-            self.aidl.dump()
-            self.res.dump()
-            self.gen_android_lib()
+           self._dump()
         else:
             output_file = args[0]
             terminal = sys.stdout
             sys.stdout = open(output_file, 'w')
-            self.jar.dump()
-            self.native.dump()
-            self.aidl.dump()
-            self.res.dump()
-            self.gen_android_lib()
+            self._dump()
             sys.stdout.close()
             sys.stdout = terminal
 
+    def _dump(self):
+         self.jar.dump()
+         self.native.dump()
+         self.aidl.dump()
+         self.res.dump()
+         self.project_config.dump()
+         self.gen_android_lib()
 
     def merge_all_deps(self):
         src_exported_deps, src_deps = self.format_proj_deps()
