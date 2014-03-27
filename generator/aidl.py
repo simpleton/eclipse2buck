@@ -12,7 +12,7 @@ class AIDL(BaseTarget):
     aidl_path_list = []
     def __init__(self, root, name):
         BaseTarget.__init__(self, root, name, config.aidl_suffix)
-        self.aidl_path_list = self._find_all_aidls(self.lib_path)
+        self.aidl_path_list = self._find_all_aidls(os.path.join(self.lib_path, 'src'))
         for aidl_path in self.aidl_path_list:
             name = self.target_name(util.path_get_basename(aidl_path))
             self.deps.append(":%s" % name)

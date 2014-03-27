@@ -13,7 +13,7 @@ class Jars(BaseTarget):
     def __init__(self, root, name):
         BaseTarget.__init__(self, root, name, config.jar_suffix)
         folder = self.lib_path
-        self.jar_list = util.find_all_files_with_suffix(folder, "*.jar")
+        self.jar_list = util.find_all_files_with_suffix(os.path.join(folder, "libs"), "*.jar")
         for jar_path in self.jar_list:
             name = self.target_name(util.path_get_basename(jar_path))
             self.exported_deps.append(":%s" % name)
