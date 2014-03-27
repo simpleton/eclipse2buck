@@ -4,6 +4,7 @@ from eclipse2buck.generator.base_target import BaseTarget
 from eclipse2buck.decorator import target
 from eclipse2buck.util import util
 from eclipse2buck import config
+import os
 
 class AIDL(BaseTarget):
     """
