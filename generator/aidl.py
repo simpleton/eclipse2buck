@@ -38,11 +38,15 @@ class AIDL(BaseTarget):
         exclude_aidls = ["src/com/tencent/mm/cache/MCacheItem.aidl",
                          "src/com/tencent/tmassistantsdk/downloadclient/TMAssistantDownloadTaskInfo.aidl"]
         #some aidl file needn't be generated
-        for exclude_aidl in exclude_aidls:
-            if exclude_aidl in path_list:
-                path_list.remove(exclude_aidl)
+        path_list_with_src = []
+        for path in path_list:
+            path_list_with_src.append(os.path.join('src', path))
 
-        return path_list
+        for exclude_aidl in exclude_aidls:
+            if exclude_aidl in path_list_with_src:
+                path_list_with_src.remove(exclude_aidl)
+
+        return path_list_with_src
 
     @target("gen_aidl")
     def _gen_aidl_target(self, aidl_name, path):

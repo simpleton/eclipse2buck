@@ -28,4 +28,4 @@ class Jars(BaseTarget):
     def dump(self):
         for jar_path in self.jar_list:
             name = self.target_name(util.path_get_basename(jar_path))
-            self.gen_jar(name, jar_path)
+            self.gen_jar(name, os.path.join("libs", jar_path))
