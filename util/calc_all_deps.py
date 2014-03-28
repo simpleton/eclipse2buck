@@ -41,7 +41,7 @@ class DepsCalculator:
             self.access_proj(dep, deps)
     
     def get_deps(self, current):
-        return self.deps_dict[current]
+        return list(set(self.deps_dict[current]))
 
 if __name__ == '__main__':
     mroot = sys.argv[1]
