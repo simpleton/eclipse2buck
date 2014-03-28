@@ -12,6 +12,12 @@ class ProjectPropertiesParser:
         properties_path = os.path.join(proj_path, "project.properties")
         self.sdk_target, self.library_flag, self.deps = self.parse(properties_path)
 
+        if not self.sdk_target.startswith("Google"):
+            target = "Google Inc.:Google APIs:%s" % self.sdk_target.split('-')[1]
+        else:
+            target = self.sdk_target
+        self.sdk_target = target
+
     def parse(self, project_properties_path):
         """
         parse the project.properties file
