@@ -6,6 +6,7 @@ from eclipse2buck.generator.native import NativeLib
 from eclipse2buck.generator.res import Resource
 from eclipse2buck.generator.aidl import AIDL
 from eclipse2buck.generator.project_config import ProjectConfig
+from eclipse2buck.generator.create_apk import CreateApk
 from eclipse2buck import decorator
 from eclipse2buck.util import util
 from eclipse2buck import config
@@ -62,6 +63,9 @@ class LibProject(BaseTarget):
          self.res.dump()
          self.project_config.dump()
          self.gen_android_lib()
+         if self.proj_name == 'app':
+             create_apk = CreateApk(self.root, self.proj_name)
+             create_apk.dump()
 
     def merge_all_deps(self):
         src_exported_deps, src_deps = self.format_proj_deps()
@@ -81,18 +85,16 @@ class LibProject(BaseTarget):
     @decorator.target("android_library")
     def gen_android_lib(self):
         print "name = '%s'," % self.target_name(self.proj_name)
+        print "android_target = '%s'," % self.properties.sdk_target
         
-        if not self.properties.sdk_target.startswith("Google"):
-            sdk_target = "Google Inc.:Google APIs:%s" % self.properties.sdk_target.split('-')[1]
-        else:
-            sdk_target = self.properties.sdk_target
-        print "android_target = '%s'," % sdk_target
-
         ##print srcs target
         if self.proj_name == "libsupport":
-            print "srcs = glob(['src/**/*.java', 'java/**/*.java', 'eclair/**/*.java','eclair-mr1/**/*.java', 'froyo/**/*.java', 'gingerbread/**/*.java','honeycomb/**/*.java', 'honeycomb_mr2/**/*.java', 'ics/**/*.java', 'ics-mr1/**/*.java', 'jellybean/**/*.java', 'jellybean-mr1/**/*.java', 'jellybean-mr2/**/*.java'])",
+            print "srcs = glob(['src/**/*.java', 'java/**/*.java', 'eclair/**/*.java','eclair-mr1/**/*.java', 'froyo/**/*.java', 'gingerbread/**/*.java','honeycomb/**/*.java', 'honeycomb_mr2/**/*.java', 'ics/**/*.java', 'ics-mr1/**/*.java', 'jellybean/**/*.java', 'jellybean-mr1/**/*.java', 'jellybean-mr2/**/*.java'])"
+        elif self.proj_name == 'app':
+            print "srcs = glob(['src/**/*.java', 'gen/**/*.java', 'plugin/**/*.java'])"
         else:
             print "srcs = glob(['src/**/*.java', 'gen/**/*.java'])"
+        ##append genfile(*.aidl)
         if self.aidl.is_existed_aidl():
             print "+ ["
             self.aidl.dump_src()

@@ -1,6 +1,7 @@
 #!/usr/bin/python
 from eclipse2buck import config
 from eclipse2buck.generator.base_target import BaseTarget
+from eclipse2buck import decorator
 
 class CreateApk(BaseTarget):
     """
@@ -14,10 +15,29 @@ class CreateApk(BaseTarget):
 
     def dump(self):
         print self.template.replace('{%TARGET_SDK%}', self.properties.sdk_target)        
+        self._print_manifest()
     
+    @decorator.target("android_manifest")
+    def _print_manifest(self):
+        """
+        android_manifest (
+        name = 'app_manifest',
+        skeleton = 'AndroidManifest.xml',
+        deps = DEPS,
+        )
+        """
+        print "name = '%s%s'," % (self.proj_name, config.manifest_suffix)
+        print "skeleton = 'AndroidManifest.xml',"
+        deps = []
+        for proj in self.properties.deps:
+            target = "//%s:%s" % (proj, self.target_name(proj))
+            deps.append(target)
+        self.gen_deps(deps)
+    
+    
+
     def _init_template(self):
         self.template = """
-include_defs('//app/DEFS')
 include_defs('//app/SECONDARY_DEX_PATTERN_LIST')
 include_defs('//app/PRIMARY_DEX_PATTERN_LIST')
 
@@ -76,11 +96,6 @@ create_apks(
   release_keystore = ':debug_keystore',
 )
 
-android_manifest (
-  name = 'app_manifest',
-  skeleton = 'AndroidManifest.xml',
-  deps = DEPS,
-)
 
 keystore(
   name = 'debug_keystore',

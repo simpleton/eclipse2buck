@@ -9,3 +9,5 @@ jar_suffix = '_JAR'
 native_suffix = '_NATIVE'
 aidl_suffix = '_AIDL'
 proj_suffix = '_PROJ'
+manifest_suffix = '_manifest'
+
