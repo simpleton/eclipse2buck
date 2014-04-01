@@ -82,18 +82,23 @@ class LibProject(BaseTarget):
         self.exported_deps.extend(self.jar.exported_deps)
         self.exported_deps.extend(self.native.exported_deps)
 
+    def print_all_java(self, folders):
+        content = ""
+        for folder in folders:
+            content += ("'%s/**/*.java'," % folder)
+        return content
+        
+
     @decorator.target("android_library")
     def gen_android_lib(self):
         print "name = '%s'," % self.target_name(self.proj_name)
         print "android_target = '%s'," % self.properties.sdk_target
         
+        ## get all folders that contained JAVA file
+        folders = util.find_all_folder_contains_file_with_suffix(os.path.join(self.root, self.proj_name), '*.java')
         ##print srcs target
-        if self.proj_name == "libsupport":
-            print "srcs = glob(['src/**/*.java', 'java/**/*.java', 'eclair/**/*.java','eclair-mr1/**/*.java', 'froyo/**/*.java', 'gingerbread/**/*.java','honeycomb/**/*.java', 'honeycomb_mr2/**/*.java', 'ics/**/*.java', 'ics-mr1/**/*.java', 'jellybean/**/*.java', 'jellybean-mr1/**/*.java', 'jellybean-mr2/**/*.java'])"
-        elif self.proj_name == 'app':
-            print "srcs = glob(['src/**/*.java', 'gen/**/*.java', 'plugin/**/*.java'])"
-        else:
-            print "srcs = glob(['src/**/*.java', 'gen/**/*.java'])"
+        print "srcs = glob([%s])" % self.print_all_java(folders)
+
         ##append genfile(*.aidl)
         if self.aidl.is_existed_aidl():
             print "+ ["

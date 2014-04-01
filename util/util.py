@@ -11,6 +11,22 @@ def find_all_files_with_suffix(relative_path, suffix):
             matches.append(os.path.relpath(os.path.join(root,filename), relative_path))
     return matches
 
+def find_all_folder_contains_file_with_suffix(relative_path, suffix):
+    """
+    find all folders under the relative path which contains files with target suffix
+    Args:
+    relative_path(str): the root path of search
+    suffix(str): target suffix
+    """
+    folders = []
+    for root, dirnames, filenames in os.walk(relative_path):
+        for filename in fnmatch.filter(filenames, suffix):
+            file_path = os.path.relpath(os.path.join(root,filename), relative_path)
+            folder = file_path.split('/')[0]
+            if folder not in folders:
+                folders.append(folder)
+    return folders
+
 
 @decorator.var_with_comma("deps")
 def gen_deps(deps):
