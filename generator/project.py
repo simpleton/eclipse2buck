@@ -96,6 +96,8 @@ class LibProject(BaseTarget):
         
         ## get all folders that contained JAVA file
         folders = util.find_all_folder_contains_file_with_suffix(os.path.join(self.root, self.proj_name), '*.java')
+        ##ignore bin folder
+        folders.remove('bin')
         ##print srcs target
         print "srcs = glob([%s])" % self.print_all_java(folders)
 
